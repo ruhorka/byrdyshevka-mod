@@ -1,4 +1,3 @@
-
 name: Build Byrdyshevka Mod
 
 on:
@@ -19,7 +18,7 @@ jobs:
       - name: Extract mod source
         run: |
           mkdir -p /tmp/source
-          unzip -q ./*.zip -d /tmp/source
+          unzip -q ./byrdyshevka-fabric-1.21.11-ready.zip -d /tmp/source
           SRC=$(find /tmp/source -path '*/src/main/java' -type d | head -n 1)
           RES=$(find /tmp/source -path '*/src/main/resources' -type d | head -n 1)
           test -n "$SRC"
@@ -35,7 +34,9 @@ jobs:
           mkdir -p /tmp/mod/src/main
           cp -r source/java /tmp/mod/src/main/java
           cp -r source/resources /tmp/mod/src/main/resources
-          sed -i 's/^mod_version=.*/mod_version=1.0.0/; s/^maven_group=.*/maven_group=com.example.byrdyshevka/; s/^archives_base_name=.*/archives_base_name=byrdyshevka/' /tmp/mod/gradle.properties
+          sed -i 's/mappings loom.officialMojangMappings()/mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"/' /tmp/mod/build.gradle
+          echo 'yarn_mappings=1.21.11+build.3' >> /tmp/mod/gradle.properties
+          sed -i 's/^mod_version=.*/mod_version=1.0.0/; s/^maven_group=.*/maven_group=com.example.byrdyshevka/' /tmp/mod/gradle.properties
 
       - name: Build JAR
         run: cd /tmp/mod && ./gradlew build --no-daemon
